@@ -168,16 +168,15 @@ Try {
         }
 
         ## <Perform Installation tasks here>
-        New-Item "C:\AutodeskInstall\" -itemType Directory
-		Copy-File -Path "$dirFiles\*.*" -Destination "C:\AutodeskInstall\" -Recurse
-		Write-Log -Message "Installing 2024..."
-		Execute-Process -Path "C:\AutodeskInstall\Install AutoCAD 2024.bat"
-		Remove-Folder -Path "C:\AutodeskInstall\"
+        Execute-Process -Path "$dirFiles\Install AutoCAD 2024.bat"
 
         ##*===============================================
         ##* POST-INSTALLATION
         ##*===============================================
         [String]$installPhase = 'Post-Installation'
+        $file = Get-ChildItem -Path $dirFiles -Recurse | Where-Object {$_.Name -match 'DLogPath'} | Select-Object Fullname
+				$location = $file.FullName
+				Remove-Item -path $location
 
         ## <Perform Post-Installation tasks here>
 
@@ -213,10 +212,7 @@ Try {
         }
 
         ## <Perform Uninstallation tasks here>
-        New-Item "C:\AutodeskUninstall\" -itemType Directory
-		Copy-File -Path "$dirFiles\*.*" -Destination "C:\AutodeskUninstall\"
-		Execute-Process -Path "C:\AutodeskUninstall\Remove2024.bat"
-		Remove-Folder -Path "C:\AutodeskUninstall\"
+        Execute-Process -Path "$dirFiles\Remove2024.bat"
 
         ##*===============================================
         ##* POST-UNINSTALLATION
@@ -283,8 +279,8 @@ Catch {
 # SIG # Begin signature block
 # MIImVAYJKoZIhvcNAQcCoIImRTCCJkECAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCeHHUy4gkgfU43
-# cOlUpURwg5LrL8B1iOJmRGikLj/IbKCCH8AwggVvMIIEV6ADAgECAhBI/JO0YFWU
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAuTT7ko4L6l6Vh
+# w54OmIT7V3buOtFCMhMc/svH46uMZaCCH8AwggVvMIIEV6ADAgECAhBI/JO0YFWU
 # jTanyYqJ1pQWMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 # DBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoM
 # EUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2Vy
@@ -458,32 +454,32 @@ Catch {
 # MSswKQYDVQQDEyJTZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEA
 # pU3fcPvc8UxUgrjysXLKMTANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEM
 # MQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQB
-# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCD7IOtGkQX+OVoJ
-# lS6ym3GNJTqozfLFMHM0HquUD/vYQjANBgkqhkiG9w0BAQEFAASCAYBei5s5esQA
-# n2ERH/Pk+eRlNr0M6+V60gKlLM78H9ho4AwjJXN6ScVVGV/r6328x8o9R8yfmSgL
-# 24i6MZicMvfZtzZ7rDVVifugwBEY/N33AhMsKaG0pE7yLRckwF0qntN/HcTSusNs
-# w8+E+MMtEi6m+y8jsCXoAlJBuj/Fz00GQ2mepKnvL98p6RaguhwSkWp06VyihcmL
-# BYlLLxBv2GoZVqV7H4QIfcw6uJw/IhFBlLed0yGBMen511wbP0EZEu64bFR6pDz7
-# LfevgnTHKxeYC57XKCJBWtnj5BKR0EeJ5nfPXfse/LEV6lZ2IPTm2gPGyDsqfspN
-# h2AMqWvaull4EaLb9xV2fQ2rsselLQy5oa9QMCYwRVfVZeBHmZyJm0ldex04U1ee
-# /PUtPBS2Fd4JTtkIjjWBY284romjob4qTBI0FGqNOTnFCsgT+zKlRyDkxLuxTcIc
-# UXGS5b3DcMA59SrgOgd/Vh3detp4+8VtSAfJWOk9il6BX9KsjAk6kCGhggNLMIID
+# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDsL59YXCunybIk
+# +P+IKLaFhMzJTzB8TRTSmJsdpT1trTANBgkqhkiG9w0BAQEFAASCAYCUI+NkW86c
+# LWJjW8AfBNJYscjHxfeXBgJ2zR6Db/xBT6vXhFec18/VBIlgntK6upHQY8iwk9Qy
+# AZvAgbTJZLmlTKJa/hDaS3WduDMu2ZF2oUhvN67plKukLD2NGlGW1o7Cr9CtItYZ
+# ulRxIH97G7hyndf7AAOZGALQL6sGE20Dy/q6m7WMju+heKysRzgo43mMRxH4Xdk0
+# VD2dfb/o45SSeK7IGAkBUoOhtNf4cHa+CLwAsLJPeWQpURBpA/k80FraHnk11VIF
+# VS8VcfFO47ISZDu60Igo+DavNZHwd0nN0MAFefmluq3n3v5arr/wVAO1RxKRaXMl
+# RUiDD4NYHT/GS4jJTgu7o5p/uWqFM3dJgPcGzPlfJCCthZ/mrjxz7OL4d1Lkem6f
+# ZGkR4jR+71D8I1l+DxCzGZZHJ4oTAaYbDPaCL4aqzdIEZhLha3oNjX2AXrzqdB4r
+# fBAmTznmIsm8PYxmKs+OTejwnr/9rrethQwpW7aL9xauuWcArdJ5k/ChggNLMIID
 # RwYJKoZIhvcNAQkGMYIDODCCAzQCAQEwgZEwfTELMAkGA1UEBhMCR0IxGzAZBgNV
 # BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UE
 # ChMPU2VjdGlnbyBMaW1pdGVkMSUwIwYDVQQDExxTZWN0aWdvIFJTQSBUaW1lIFN0
 # YW1waW5nIENBAhA5TCXhfKBtJ6hl4jvZHSLUMA0GCWCGSAFlAwQCAgUAoHkwGAYJ
-# KoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjMwNzA1MjEz
-# ODE1WjA/BgkqhkiG9w0BCQQxMgQwf0EwyOeC2cYFWjQNP6stZs9s/iHlOzEPVRQf
-# mBjHJZljhNOCb+qBPM+7UEjufmXhMA0GCSqGSIb3DQEBAQUABIICAGVAJtZ8V/9b
-# Wac9tpsiu1P5gvr8LB+w5e+MSLhzAOOckcgt5KeJRDbpuGSLO2wJwIvSZ9PqMN/+
-# KvnhDNroxhcaCyhHcVlumHM5lOBozNNSLLTuJJGV7003aOmMNPBTQIq3CLfIHT0s
-# oeqmrcq+NZZMvI9LtSLqqsHJof/B6/ddseFJBAOjVatSQkQJtPUAeigqsTyDftck
-# RYx7qKzh+tp1Bw5SmqzaOe9dYU/JX4vI/5rN3Qf6rMbBYCKGyUHePsnYjLS/1uUf
-# RoyBwIRTkElS3ijdi11CJ9FvxiGyoSkvVbZ4SlMqNPSUlJ/I6E/UcYaNX5+BdATK
-# +mBUbrZpIwzNN5XYw0DdUz/L8tIdiX9eutUb5brm7CGlORxPGWn6FP8owtECgDzB
-# nSeHYyFzv7opcPCAeFeGntRihhw+TiwbsnaElGSNWMTLDwGF36Ic1WSMAGduvjtH
-# iFzbsqoYGjGMSEaj60sq56klDhyailzFL/OmDZpk6YifQLo7pG+Flq5SwYEY/RDc
-# tATJDwSbGdnl29qBkwSup8I6zmQs3knuWOsiH7C3Q3kMdPowIM/JEqJpu3pEptFQ
-# YWciVNjRyXW+faWx4sxTfifLwuxCi2m5H2d61hbpFaFJxIg12z0GsZzEi1JsPeQn
-# I3QJ04cWx1DbAxtZ9FC/z9/NDgfqdUKs
+# KoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjMwNzA2MTQx
+# NzI0WjA/BgkqhkiG9w0BCQQxMgQwuB3gvDxPUj1jMuKw6k7eA40G3YQrFC9UpF8d
+# rHs5FgB7KKqnRln3IQWDBWHu9rpOMA0GCSqGSIb3DQEBAQUABIICAEECLfePrE5V
+# pMmdBZEKvuhdv7L0yKPxadffEecFXAfwDMK8/PJqNIR6k2NJVKRkDi+gU8FcwCX0
+# fN3o2RkSziIyhITQsmQiHnkwpJV38Zuxt4bNBtK2euM1AEt2mwpRFYgHhC6zLY7O
+# 89lFQmga6TeXg9TnzCZpfn58/A7ZXnyn7opW7DNreUl9399Cjw/EwjVZRMVe/7/6
+# iM4M3gFEi/Uz+mL0/T9RSpl4rWCko6uMNuL4QokakEY7WOCKVyKdxRA+vSfXgcUK
+# jUlJC4YjUT6jtw3kOKA11dXvZJ7t6neILOMt+zhAvKFOC53f+rPjRdji6dIf40r4
+# cqTAvb/VT6Gr7alSXgSgpYPAcrl42tJUzze2ljKTW3dqRgvnEyx28VyQP7F4BvDC
+# 6kAhgTSy2hm+SUMHNN8lLIQt7CdBTunLJ+3i839hht09usxjGdS8xA0pB+60Rt2J
+# A/Y1jF7uw3tlgr3NWOymmCqnSPqykrE1qRdw779EHuR6ZkGsbxsy/uqYiYcdQbtJ
+# e8/MwAlBEPz7LjEVCsgVM/BxRiNKg0Fr/C92ayHXr5KSlZmZiL0td6miJUonr/EY
+# 57x0nNagCOZbCjkqbij6TN8Q+VLcrK3eyFDxgnAg1TX1R2/pEvpoa6KnMku0LsrO
+# YKNS8Zs1JsTzNHkd2rinA44SyLs/3eny
 # SIG # End signature block
