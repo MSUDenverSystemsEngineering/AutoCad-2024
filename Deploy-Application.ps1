@@ -144,13 +144,22 @@ Try {
         [String]$installPhase = 'Pre-Installation'
 
         ## Show Welcome Message, close Internet Explorer if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt
-        Show-InstallationWelcome -CloseApps 'processName' -CheckDiskSpace -PersistPrompt
+        Show-InstallationWelcome -CloseApps 'alias,adSSO,AutodeskDesktopApp,AdAppMgrSvc,AdskLicensingService,AdskLicensingAgent,FNPLicensingService' -CheckDiskSpace -PersistPrompt
 
         ## Show Progress Message (with the default message)
         Show-InstallationProgress
 
         ## <Perform Pre-Installation tasks here>
 
+        ## Uninstall previous version of AutoCAD
+        If (Test-Path -Path "C:\Program Files\Autodesk\AutoCAD 2023\acad.exe" -PathType Leaf)
+		{
+			New-Item "C:\AutodeskUninstall\" -itemType Directory
+			Copy-File -Path "$dirFiles\*.*" -Destination "C:\AutodeskUninstall\"
+			Write-Log -Message "Uninstalling 2023..."
+			Execute-Process -Path "C:\AutodeskUninstall\Remove2023.bat"
+			Remove-Folder -Path "C:\AutodeskUninstall\"
+        }
 
         ##*===============================================
         ##* INSTALLATION
@@ -174,9 +183,6 @@ Try {
         ##* POST-INSTALLATION
         ##*===============================================
         [String]$installPhase = 'Post-Installation'
-        $file = Get-ChildItem -Path $dirFiles -Recurse | Where-Object {$_.Name -match 'DLogPath'} | Select-Object Fullname
-				$location = $file.FullName
-				Remove-Item -path $location
 
         ## <Perform Post-Installation tasks here>
 
@@ -279,8 +285,8 @@ Catch {
 # SIG # Begin signature block
 # MIImVAYJKoZIhvcNAQcCoIImRTCCJkECAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAuTT7ko4L6l6Vh
-# w54OmIT7V3buOtFCMhMc/svH46uMZaCCH8AwggVvMIIEV6ADAgECAhBI/JO0YFWU
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA0w0ezz2ZXJUfk
+# xIsCGU4lCRaRP8dUxSVE/n6VsCqTZqCCH8AwggVvMIIEV6ADAgECAhBI/JO0YFWU
 # jTanyYqJ1pQWMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 # DBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoM
 # EUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2Vy
@@ -454,32 +460,32 @@ Catch {
 # MSswKQYDVQQDEyJTZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEA
 # pU3fcPvc8UxUgrjysXLKMTANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEM
 # MQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQB
-# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDsL59YXCunybIk
-# +P+IKLaFhMzJTzB8TRTSmJsdpT1trTANBgkqhkiG9w0BAQEFAASCAYCUI+NkW86c
-# LWJjW8AfBNJYscjHxfeXBgJ2zR6Db/xBT6vXhFec18/VBIlgntK6upHQY8iwk9Qy
-# AZvAgbTJZLmlTKJa/hDaS3WduDMu2ZF2oUhvN67plKukLD2NGlGW1o7Cr9CtItYZ
-# ulRxIH97G7hyndf7AAOZGALQL6sGE20Dy/q6m7WMju+heKysRzgo43mMRxH4Xdk0
-# VD2dfb/o45SSeK7IGAkBUoOhtNf4cHa+CLwAsLJPeWQpURBpA/k80FraHnk11VIF
-# VS8VcfFO47ISZDu60Igo+DavNZHwd0nN0MAFefmluq3n3v5arr/wVAO1RxKRaXMl
-# RUiDD4NYHT/GS4jJTgu7o5p/uWqFM3dJgPcGzPlfJCCthZ/mrjxz7OL4d1Lkem6f
-# ZGkR4jR+71D8I1l+DxCzGZZHJ4oTAaYbDPaCL4aqzdIEZhLha3oNjX2AXrzqdB4r
-# fBAmTznmIsm8PYxmKs+OTejwnr/9rrethQwpW7aL9xauuWcArdJ5k/ChggNLMIID
+# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCBuYwCY/SA/3g8B
+# U5YnNhFwfznHkO/nS8vQ2CF/p/gfhDANBgkqhkiG9w0BAQEFAASCAYANUN/NtwQ6
+# XenQj+mIJqDv08ovrAhNkyCkBSBAd9z+hwZkyWjLhsRCkLPonTm+L4I777uPNblV
+# 3YtHUb8eYNPkooHVlwpQjGa8R5okLP4XiOJzOK8CSFT075b/rlRj8GwaxyQehOKS
+# t4I87XTvq3RCZZDHMpclIaMqXW8RxofPvKSiHz5eGVRndrXsA4uu7omek9iEI8Wi
+# AFRSCVcK3aJumLE8uCWMQX+F7Aspn0pwqi8ydCPXF/AsB3qT0TlxboK/wZmnitcE
+# B2RNk1fJvy4xKB/XpigFAuARBpzPLGnM9As9lxbs4cSD2WsJjlO9PZ8p5g13P+1Z
+# 1zpSPaXdMRYCpkGXV4BBsm71TSMHzQXxLPzz++4mttTbu5SbyNzcjWMMM/ZYBY6t
+# t3ZoRHaf6G+nrdeBkL3YS/zurE8OnpaxZsPTy9BhRuQoDXDj1ovUZyllIoKP9zeP
+# 6PjTFcPnMJLh4k1FikoU5NALHAlGUtBff3EeK0b6TeRnP/89ENFni2OhggNLMIID
 # RwYJKoZIhvcNAQkGMYIDODCCAzQCAQEwgZEwfTELMAkGA1UEBhMCR0IxGzAZBgNV
 # BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UE
 # ChMPU2VjdGlnbyBMaW1pdGVkMSUwIwYDVQQDExxTZWN0aWdvIFJTQSBUaW1lIFN0
 # YW1waW5nIENBAhA5TCXhfKBtJ6hl4jvZHSLUMA0GCWCGSAFlAwQCAgUAoHkwGAYJ
-# KoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjMwNzA2MTQx
-# NzI0WjA/BgkqhkiG9w0BCQQxMgQwuB3gvDxPUj1jMuKw6k7eA40G3YQrFC9UpF8d
-# rHs5FgB7KKqnRln3IQWDBWHu9rpOMA0GCSqGSIb3DQEBAQUABIICAEECLfePrE5V
-# pMmdBZEKvuhdv7L0yKPxadffEecFXAfwDMK8/PJqNIR6k2NJVKRkDi+gU8FcwCX0
-# fN3o2RkSziIyhITQsmQiHnkwpJV38Zuxt4bNBtK2euM1AEt2mwpRFYgHhC6zLY7O
-# 89lFQmga6TeXg9TnzCZpfn58/A7ZXnyn7opW7DNreUl9399Cjw/EwjVZRMVe/7/6
-# iM4M3gFEi/Uz+mL0/T9RSpl4rWCko6uMNuL4QokakEY7WOCKVyKdxRA+vSfXgcUK
-# jUlJC4YjUT6jtw3kOKA11dXvZJ7t6neILOMt+zhAvKFOC53f+rPjRdji6dIf40r4
-# cqTAvb/VT6Gr7alSXgSgpYPAcrl42tJUzze2ljKTW3dqRgvnEyx28VyQP7F4BvDC
-# 6kAhgTSy2hm+SUMHNN8lLIQt7CdBTunLJ+3i839hht09usxjGdS8xA0pB+60Rt2J
-# A/Y1jF7uw3tlgr3NWOymmCqnSPqykrE1qRdw779EHuR6ZkGsbxsy/uqYiYcdQbtJ
-# e8/MwAlBEPz7LjEVCsgVM/BxRiNKg0Fr/C92ayHXr5KSlZmZiL0td6miJUonr/EY
-# 57x0nNagCOZbCjkqbij6TN8Q+VLcrK3eyFDxgnAg1TX1R2/pEvpoa6KnMku0LsrO
-# YKNS8Zs1JsTzNHkd2rinA44SyLs/3eny
+# KoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjMwNzA3MjE1
+# NjE5WjA/BgkqhkiG9w0BCQQxMgQw14xbxn1ncJU4SnhBpTmtThDhKMq2J0ImpMEq
+# NOz5860QwQOMJAEacoFSnz5YWqoEMA0GCSqGSIb3DQEBAQUABIICAJTFiaRil3DK
+# WNNa4ZMKLJme2xOsmqbYFeg/knfQeYUrKtJOX/JhyQsyLVjjHU8UBnXIjXPk/XmI
+# KfERL4AKEGV/0wW3lfbxsiLwyJ7Xjof3Vwdd5iCnoKuVzMPwrcP3ytE2HL/KjMrM
+# lnpRQV/6hOZNloC5aMyTbQmpXQn4RoAskqpYSd8oFAfD4fIgqoHnDQrvokatTD54
+# HZ+i63SrQWvrty+3xVsgQGFm2tRGkrBhg8WIg1itd0GqBPj6KFFDC/Q2E0nmFOj/
+# 7whag87EgR7MrBZzS/Q1U5cegyvcZ1tuRz1rkR0qe+nZvAEJR/l3OReGNxaN6pqX
+# powgDtAq5Zqbfr9nEkIXrbIuKF47oos8h+xmchSd1Zrp1AAmnO/FkFUiPvLKn6Sp
+# PxHrZ5lgmXfjfMSwir9l067T5Te9pG4VO1DVhSXpv+zywcBThE1fJl40n5YdVQxI
+# 1rwCcP7Y1xRp816iWSwxElO/4cBa6tgewETGcdJGkgzqFgdVkDpKanm7vjJz5GZg
+# ROM5egSUshQ2V/6mt1hum2bX+9pi5eyiVnInlDC7hzflgSvByorVx6yHn9LAdlES
+# ktP4alcTXLxME/l91xBmXxgtyYU0pFDrysNZ4+pO0FR2xnMAiId6WRcYi1BVkU3y
+# xN9GIZhw2PHD/zCRliJc9IG6Xk8/NHrI
 # SIG # End signature block
