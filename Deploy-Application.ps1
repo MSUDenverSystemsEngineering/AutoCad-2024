@@ -177,7 +177,14 @@ Try {
         }
 
         ## <Perform Installation tasks here>
-        Execute-Process -Path "$dirFiles\Install AutoCAD 2024.bat"
+
+        ## Moves items to a local folder and runs to avoid peercaching issues wiht Dlogfile filename causing hash mismatches on required deployments and failing the install
+		New-Item "C:\AutodeskInstall\" -itemType Directory
+		Copy-File -Path "$dirFiles\*.*" -Destination "C:\AutodeskInstall\" -Recurse
+		Write-Log -Message "Installing 2024..."
+		Execute-Process -Path "$dirFiles\Install AutoCAD 2024.bat"
+		Remove-Folder -Path "C:\AutodeskInstall\"
+        
 
         ##*===============================================
         ##* POST-INSTALLATION
@@ -218,7 +225,13 @@ Try {
         }
 
         ## <Perform Uninstallation tasks here>
-        Execute-Process -Path "$dirFiles\Remove2024.bat"
+         ## Moves items to a local folder and runs to avoid peercaching issues wiht Dlogfile filename causing hash mismatches on required deployments and failing the install
+         New-Item "C:\AutodeskInstall\" -itemType Directory
+         Copy-File -Path "$dirFiles\*.*" -Destination "C:\AutodeskInstall\" -Recurse
+         Write-Log -Message "Uninstalling 2024..."
+         Execute-Process -Path "$dirFiles\Remove2024.bat"
+         Remove-Folder -Path "C:\AutodeskInstall\"
+        
 
         ##*===============================================
         ##* POST-UNINSTALLATION
@@ -285,8 +298,8 @@ Catch {
 # SIG # Begin signature block
 # MIImVAYJKoZIhvcNAQcCoIImRTCCJkECAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA0w0ezz2ZXJUfk
-# xIsCGU4lCRaRP8dUxSVE/n6VsCqTZqCCH8AwggVvMIIEV6ADAgECAhBI/JO0YFWU
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBnyvasMizdcZ5E
+# iG8AjxCLAdvue3rH+DUxV3Q7Pgc8t6CCH8AwggVvMIIEV6ADAgECAhBI/JO0YFWU
 # jTanyYqJ1pQWMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 # DBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoM
 # EUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2Vy
@@ -460,32 +473,32 @@ Catch {
 # MSswKQYDVQQDEyJTZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEA
 # pU3fcPvc8UxUgrjysXLKMTANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEM
 # MQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQB
-# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCBuYwCY/SA/3g8B
-# U5YnNhFwfznHkO/nS8vQ2CF/p/gfhDANBgkqhkiG9w0BAQEFAASCAYANUN/NtwQ6
-# XenQj+mIJqDv08ovrAhNkyCkBSBAd9z+hwZkyWjLhsRCkLPonTm+L4I777uPNblV
-# 3YtHUb8eYNPkooHVlwpQjGa8R5okLP4XiOJzOK8CSFT075b/rlRj8GwaxyQehOKS
-# t4I87XTvq3RCZZDHMpclIaMqXW8RxofPvKSiHz5eGVRndrXsA4uu7omek9iEI8Wi
-# AFRSCVcK3aJumLE8uCWMQX+F7Aspn0pwqi8ydCPXF/AsB3qT0TlxboK/wZmnitcE
-# B2RNk1fJvy4xKB/XpigFAuARBpzPLGnM9As9lxbs4cSD2WsJjlO9PZ8p5g13P+1Z
-# 1zpSPaXdMRYCpkGXV4BBsm71TSMHzQXxLPzz++4mttTbu5SbyNzcjWMMM/ZYBY6t
-# t3ZoRHaf6G+nrdeBkL3YS/zurE8OnpaxZsPTy9BhRuQoDXDj1ovUZyllIoKP9zeP
-# 6PjTFcPnMJLh4k1FikoU5NALHAlGUtBff3EeK0b6TeRnP/89ENFni2OhggNLMIID
+# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCBfJUJxemZ9MxAs
+# /TyAq24GbwkUz5bBVvcznPB/zSPjiTANBgkqhkiG9w0BAQEFAASCAYBxA+i1CyU2
+# XqZ11bAiCHxC4eWXl1XIqEJsLSkglRAAlN9qzLO0q4GfRYDAVbzXx61FmemfO5Y7
+# iVSx/lxZw3DrXuIGgYuD0NnhrXlgACQNrodyFXuHOX5Iu9/eD6vOrrROEN8SAFJj
+# nkuNKy1ntIoc52tfiMz9nvJGfxDtEQ9wIcK5M/I5cOSc2JRCrsACuXqNjMwZJsV7
+# TIA3MHo27tMb4uMbpOHJikoSPkC5fHqRUu7WcDkq0Eu9VVcVelDxk0YlpkYEsy9n
+# YDKvY5DHoeb74/sGtSP1m7ZF0WbHhc5dtRZOmN4nayS1M2ClX2hFcfEZ4Wb7uvEZ
+# hyPHn/Is5mKvUnelW9LcvXvqv/4F6bCLUq5Sx62UE8UjO0COTM4CDXTT9do6bVBY
+# 33+8YWPRx4cSkNyc31qeXfBjDbFxrEQ1hEtgTbLbjnUxFkkUvj9Et4LGzCOMH7S4
+# flSlqMK9hrfPEe4BajiHDaSBjzTvrPhZz23/O1wqB59xLc+UQgsd20uhggNLMIID
 # RwYJKoZIhvcNAQkGMYIDODCCAzQCAQEwgZEwfTELMAkGA1UEBhMCR0IxGzAZBgNV
 # BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UE
 # ChMPU2VjdGlnbyBMaW1pdGVkMSUwIwYDVQQDExxTZWN0aWdvIFJTQSBUaW1lIFN0
 # YW1waW5nIENBAhA5TCXhfKBtJ6hl4jvZHSLUMA0GCWCGSAFlAwQCAgUAoHkwGAYJ
-# KoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjMwNzA3MjE1
-# NjE5WjA/BgkqhkiG9w0BCQQxMgQw14xbxn1ncJU4SnhBpTmtThDhKMq2J0ImpMEq
-# NOz5860QwQOMJAEacoFSnz5YWqoEMA0GCSqGSIb3DQEBAQUABIICAJTFiaRil3DK
-# WNNa4ZMKLJme2xOsmqbYFeg/knfQeYUrKtJOX/JhyQsyLVjjHU8UBnXIjXPk/XmI
-# KfERL4AKEGV/0wW3lfbxsiLwyJ7Xjof3Vwdd5iCnoKuVzMPwrcP3ytE2HL/KjMrM
-# lnpRQV/6hOZNloC5aMyTbQmpXQn4RoAskqpYSd8oFAfD4fIgqoHnDQrvokatTD54
-# HZ+i63SrQWvrty+3xVsgQGFm2tRGkrBhg8WIg1itd0GqBPj6KFFDC/Q2E0nmFOj/
-# 7whag87EgR7MrBZzS/Q1U5cegyvcZ1tuRz1rkR0qe+nZvAEJR/l3OReGNxaN6pqX
-# powgDtAq5Zqbfr9nEkIXrbIuKF47oos8h+xmchSd1Zrp1AAmnO/FkFUiPvLKn6Sp
-# PxHrZ5lgmXfjfMSwir9l067T5Te9pG4VO1DVhSXpv+zywcBThE1fJl40n5YdVQxI
-# 1rwCcP7Y1xRp816iWSwxElO/4cBa6tgewETGcdJGkgzqFgdVkDpKanm7vjJz5GZg
-# ROM5egSUshQ2V/6mt1hum2bX+9pi5eyiVnInlDC7hzflgSvByorVx6yHn9LAdlES
-# ktP4alcTXLxME/l91xBmXxgtyYU0pFDrysNZ4+pO0FR2xnMAiId6WRcYi1BVkU3y
-# xN9GIZhw2PHD/zCRliJc9IG6Xk8/NHrI
+# KoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjMwNzEzMDIw
+# NDQ5WjA/BgkqhkiG9w0BCQQxMgQwtEWvlF99pn9ex1s7zZU+/XaTBmHmNPm9gjDh
+# 7etSnppnVrp5F5udOEgJh5IjDGbJMA0GCSqGSIb3DQEBAQUABIICAFkKhndWivK6
+# h+bi+KOzQiG6uiz+/hZkciVK2bWxY2qLkORHwfLYrhB6wLyEsmX6EOzYWRm59LX9
+# t3ZhRGgLg7S7ogc04XLe+n2eoBmu+Epdh5XG0MilFLjgSHekHKTyI7/Y4/AKZqvz
+# dlmDvlmTFNGRXHwLEEA+JqtNFqOnH0rnRVoVMETQTlIhVsIfuNxF403jdvqsYOa2
+# MTlY8ywk8NUkAXqd70V2YHUykR7e4MQ0F9LXyBb2UMDKcpuuEfX6zdHoNPK+6ngU
+# bL1FQhQvQ+JMV+VqzAxGdD9Pi3k6uF85aAE7LsYZ1VxFmO2KH7grjnW73x2HyRzT
+# i5Jroo+sJHFQ2cMQC87YlmIwCz1TxCdaeoEo7oZVr7GI0YnerZNzueX3/nZuhNmU
+# Btsl4xmFtCohHSZ9HfeQr7O+xQfa+k0xxHXwFcvb12QKa23UZ29dZhzmmk9F07IE
+# 8PYqAb9YErc5c6mxBzo31/g4EPWa0fTcU4ydJdfdDXSIox3mns8VQwjXt1N69qtl
+# QaC06bboU1ReDmY60rTmNwdoEp48abkGx+Ou8xAKaf+1z8nmzuARLvLRt/I+oD3b
+# 1fgMxv7PCA0LgXdt3ODhXs731X9fN26r85jMCtBTvjBUMlgZoesMAQ4L5pVcdJ4V
+# JobS3SvruBFX4vMxP8qtjd6pxjP3HhJz
 # SIG # End signature block
