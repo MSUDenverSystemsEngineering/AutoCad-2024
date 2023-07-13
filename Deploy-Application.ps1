@@ -184,7 +184,7 @@ Try {
 		Write-Log -Message "Installing 2024..."
 		Execute-Process -Path "$dirFiles\Install AutoCAD 2024.bat"
 		Remove-Folder -Path "C:\AutodeskInstall\"
-        
+
 
         ##*===============================================
         ##* POST-INSTALLATION
@@ -231,7 +231,7 @@ Try {
          Write-Log -Message "Uninstalling 2024..."
          Execute-Process -Path "$dirFiles\Remove2024.bat"
          Remove-Folder -Path "C:\AutodeskInstall\"
-        
+
 
         ##*===============================================
         ##* POST-UNINSTALLATION
